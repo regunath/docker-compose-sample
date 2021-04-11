@@ -1,0 +1,41 @@
+version : '3'
+services:
+  my-mysql-compose:
+    restart: always
+    hostname: my-mysql-compose
+    container_name: my-mysql-compose
+    image: mysql
+    networks:
+      - spring-boot-comp-mysql-network
+    environment:
+      MYSQL_DATABASE: test
+      MYSQL_USER: employee
+      MYSQL_PASSWORD: employee
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db-dump:/docker-entrypoint-initdb.d/
+  employee-service:
+    restart: on-failure
+    build: ./employee-service/
+    image: employee-service:latest
+    networks:
+      - spring-boot-comp-mysql-network
+    ports:
+      - "8091:8091"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://my-mysql-compose:3306/test
+      SPRING_DATASOURCE_USERNAME: employee
+      SPRING_DATASOURCE_PASSWORD: employee
+    depends_on:
+      - my-mysql-compose    
+
+volumes:
+  db-data:
+
+networks:
+    spring-boot-comp-mysql-network:
+      driver: bridge
+
+
