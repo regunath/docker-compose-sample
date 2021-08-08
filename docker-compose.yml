@@ -30,6 +30,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: employee
     depends_on:
       - my-mysql-compose    
+    
 
 volumes:
   db-data:
